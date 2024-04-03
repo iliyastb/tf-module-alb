@@ -24,15 +24,17 @@ resource "aws_security_group" "main" {
     cidr_blocks = var.allow_cidr
   }
 
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
   tags = merge(
     var.tags, { Name = "${var.name}-${var.env}-lb" }
   )
-}
-
-resource "aws_vpc_security_group_egress_rule" "egress" {
-  security_group_id = aws_security_group.main.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1"
 }
 
 resource "aws_lb_listener" "main" {
